@@ -1,0 +1,55 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/ivory"
+    android:layout_margin="3dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_user_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/bz_test_img"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv_user_img"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:text="monster"/>
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2015-09-29"
+        android:layout_below="@id/tv"
+        android:layout_toRightOf="@id/iv_user_img"
+        android:layout_marginTop="5dp"
+        android:layout_alignLeft="@id/tv"/>
+
+    <TextView
+        android:id="@+id/tv_news_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="孔子塑像落成庆祝仪式举行"
+        android:layout_below="@id/iv_user_img"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/red"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <!--<View-->
+        <!--android:id="@+id/v_divided"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/black"-->
+        <!--android:layout_below="@id/tv_news_title"/>-->
+</RelativeLayout>
