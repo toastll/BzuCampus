@@ -1,16 +1,18 @@
-package cn.edu.bzu.bzucampus;
+package cn.edu.bzu.bzucampus.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import cn.edu.bzu.bzucampus.BaseActivity;
+import cn.edu.bzu.bzucampus.R;
+
 /**
  * Created by monster on 2015/10/4.
  */
-public class NewsInformActivity extends AppCompatActivity {
+public class NewsInformActivity extends BaseActivity {
 
     private Toolbar mToolbar;
 

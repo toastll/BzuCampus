@@ -1,5 +1,6 @@
 package cn.edu.bzu.bzucampus;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,13 +17,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 
+import cn.edu.bzu.bzucampus.activity.LoginActivity;
 import cn.edu.bzu.bzucampus.adapter.ViewPagerAdapter;
 import cn.edu.bzu.bzucampus.fragment.LifeFragment;
 import cn.edu.bzu.bzucampus.fragment.TopNewsFragment;
 import cn.edu.bzu.bzucampus.fragment.MarketNewsFragment;
 import cn.edu.bzu.bzucampus.fragment.GraduateNewsFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -60,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 switch (id) {
                     //返回首页
-                    case R.id.nav_home:
-                        mViewPager.setCurrentItem(0);
+                    case R.id.menu_item_login:
+                        Intent loginItent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(loginItent);
                         break;
                 }
                 mDrawerLayout.closeDrawers();
