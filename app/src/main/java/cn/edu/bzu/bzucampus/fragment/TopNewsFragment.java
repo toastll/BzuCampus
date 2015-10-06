@@ -9,6 +9,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,9 @@ public class TopNewsFragment extends Fragment {
     private List<String> mList;
     private Context mContext;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayoutManager layoutManager;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,7 +71,7 @@ public class TopNewsFragment extends Fragment {
         mRrecyclerView.setAdapter(mAdapter);
 
         //设置RecyclerView的布局管理
-        LinearLayoutManager layoutManager=new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false);
+        layoutManager=new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false);
         mRrecyclerView.setLayoutManager(layoutManager);
 
         //设置RecyclerView的item间的分割线
@@ -88,7 +93,10 @@ public class TopNewsFragment extends Fragment {
             }
         });
 
-        swipeRefreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        /**
+         * 借助SwipeRefreshLayout实现下拉刷新的操作
+         */
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         //设置刷新时动画的颜色
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -103,6 +111,33 @@ public class TopNewsFragment extends Fragment {
                 }, 3000);
             }
         });
+
+        /**
+         * 滚动上拉刷新
+         */
+        mRrecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastVisibleItem = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                int totalItemCount = layoutManager.getItemCount();
+                //lastVisibleItem >= totalItemCount - 4 表示剩下4个item自动加载，各位自由选择
+                // dy>0 表示向下滑动
+                if (lastVisibleItem >= totalItemCount - 4 && dy > 0) {
+
+                    //TODO 在这个地方控制上啦刷新是否有新的内容产生
+                    boolean isLoadingMore=true;
+                    if(isLoadingMore){
+                        Toast.makeText(mContext,"无更多内容",Toast.LENGTH_SHORT).show();
+                    } else{
+                        Toast.makeText(mContext,"有更多内容",Toast.LENGTH_SHORT).show();
+                        isLoadingMore = false;
+                    }
+                }
+
+            }
+        });
+
     }
 
     @Override
