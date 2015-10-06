@@ -8,7 +8,6 @@ import cn.bmob.v3.datatype.BmobFile;
  * Created by monster on 2015/10/6.
  */
 public class TopNews extends BmobObject{
-    private String objectId;  //帖子的id
     private String title;      //帖子的标题
     private String content;  //帖子的内容
 
@@ -16,15 +15,6 @@ public class TopNews extends BmobObject{
     private BmobFile newsImg;  //新闻中的图片
 
 
-    @Override
-    public String getObjectId() {
-        return objectId;
-    }
-
-    @Override
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
-    }
 
     public String getTitle() {
         return title;

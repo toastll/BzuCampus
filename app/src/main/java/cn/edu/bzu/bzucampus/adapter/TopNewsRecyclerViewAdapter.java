@@ -5,20 +5,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import cn.edu.bzu.bzucampus.R;
+import cn.edu.bzu.bzucampus.entity.TopNews;
+import cn.edu.bzu.bzucampus.util.ImageLoader;
 
 /**
  * TopNews新闻适配器
  * Created by monster on 2015/10/5.
  */
 public class TopNewsRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolder> {
-    private List<String> mData;
+    private List<TopNews> mData;
     private Context context;
     private LayoutInflater mInflater;
+    //private ImageLoader mImageLoader;
 
     /**
      * 声明一个接口，用于实现点击事件
@@ -40,7 +44,7 @@ public class TopNewsRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolde
      * @param mData
      * @param context
      */
-    public TopNewsRecyclerViewAdapter(List<String> mData,Context context){
+    public TopNewsRecyclerViewAdapter(List<TopNews> mData,Context context){
         this.mData=mData;
         this.context=context;
         mInflater=LayoutInflater.from(context);
@@ -56,7 +60,9 @@ public class TopNewsRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolde
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        holder.tv.setText(mData.get(position));
+        holder.tv_nick.setText(mData.get(position).getAuthor().getNick());//昵称
+        //holder.tv_date.setText(mData.get(position).getCreatedAt()); //创建时间
+        holder.tv_news_title.setText(mData.get(position).getTitle()); //内容
 
         if (mOnItemClickListener!=null){
 
@@ -93,11 +99,15 @@ public class TopNewsRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolde
  * ViewHolder类，这个类的作用主要用于实例化控件
  */
 class MyViewHolder extends RecyclerView.ViewHolder {
-    TextView tv; //声明控件
-
+    TextView tv_nick;
+    //ImageView iv_user_img;
+    TextView tv_news_title;
     public MyViewHolder(View itemView) {
         super(itemView);
         /**初始化控件**/
-        tv = (TextView) itemView.findViewById(R.id.tv);
+        tv_nick = (TextView) itemView.findViewById(R.id.tv_nick);
+      //  iv_user_img= (ImageView) itemView.findViewById(R.id.iv_user_img);
+        //tv_date = (TextView) itemView.findViewById(R.id.tv_date);
+        tv_news_title= (TextView) itemView.findViewById(R.id.tv_news_title);
     }
 }

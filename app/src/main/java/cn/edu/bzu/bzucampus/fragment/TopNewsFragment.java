@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,8 +21,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 import cn.edu.bzu.bzucampus.R;
 import cn.edu.bzu.bzucampus.adapter.TopNewsRecyclerViewAdapter;
+import cn.edu.bzu.bzucampus.entity.SchoolUser;
+import cn.edu.bzu.bzucampus.entity.TopNews;
 
 
 /**
@@ -31,11 +36,31 @@ public class TopNewsFragment extends Fragment {
 
     private RecyclerView mRrecyclerView;
     private TopNewsRecyclerViewAdapter mAdapter;
-    private List<String> mList;
+    private List<TopNews> mList;
     private Context mContext;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayoutManager layoutManager;
 
+    private Thread mThread;
+    private Runnable runnable;
+
+    private final static int MSG_SUCCESS = 0; //成功获取数据的标识
+    private final static int MSG_FAILURE = 1; //失败获取数据的标识
+
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case MSG_SUCCESS:
+                   //mList= (List<TopNews>) msg.obj;
+                    Toast.makeText(mContext,"查询数据成功",Toast.LENGTH_SHORT).show();
+                    break;
+                case MSG_FAILURE:
+                    Toast.makeText(mContext,"查询数据失败",Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -47,9 +72,35 @@ public class TopNewsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        checkData();
         initData();
         initView(view);
+    }
 
+    /**
+     * 从数据库中取得数据
+     */
+    private void checkData() {
+         runnable=new Runnable() {
+            @Override
+            public void run() {
+                BmobQuery<TopNews> query=new BmobQuery<TopNews>();
+                query.setLimit(40);  //返回40条数据，如果不加上这条语句，默认返回10条数据
+                query.findObjects(mContext, new FindListener<TopNews>() {
+
+                    @Override
+                    public void onSuccess(List<TopNews> list) {
+                        Toast.makeText(mContext,"数据数目"+list.size(),Toast.LENGTH_SHORT).show();
+                        mHandler.obtainMessage(MSG_SUCCESS,list).sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(int i, String s) {
+                        mHandler.obtainMessage(MSG_FAILURE).sendToTarget();
+                    }
+                });
+            }
+        };
     }
 
     /**
@@ -57,8 +108,22 @@ public class TopNewsFragment extends Fragment {
      */
     private void initData() {
         mList=new ArrayList<>();
-        for (int i=0;i<6;i++){
-            mList.add("index"+i);
+
+        /**
+         * 假数据测试使用
+         */
+        for(int i=0;i<6;i++){
+            TopNews topNews=new TopNews();
+            SchoolUser schoolUser=new SchoolUser();
+            schoolUser.setNick("YY");
+            topNews.setTitle("我是小怪兽"+i);
+            topNews.setAuthor(schoolUser);
+            mList.add(topNews);
+        }
+
+        if(mThread==null){
+            mThread=new Thread(runnable);
+            mThread.start();
         }
     }
 
