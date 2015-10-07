@@ -64,7 +64,7 @@ public class TopNewsRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolde
         holder.tv_date.setText(mData.get(position).getCreatedAt()); //创建时间
         String url=mData.get(position).getAuthor().getUserPhoto().getFileUrl(context);
         holder.iv_user_img.setTag(url);
-        new ImageLoader().showImageByThread(holder.iv_user_img,url);
+        new ImageLoader().showImageByAsyncTask(holder.iv_user_img,url);
         holder.tv_news_title.setText(mData.get(position).getTitle()); //内容
 
         if (mOnItemClickListener!=null){
