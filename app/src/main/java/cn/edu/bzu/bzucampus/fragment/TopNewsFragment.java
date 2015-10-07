@@ -23,6 +23,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.edu.bzu.bzucampus.R;
 import cn.edu.bzu.bzucampus.adapter.TopNewsRecyclerViewAdapter;
 import cn.edu.bzu.bzucampus.entity.SchoolUser;
@@ -36,13 +37,15 @@ public class TopNewsFragment extends Fragment {
 
     private RecyclerView mRrecyclerView;
     private TopNewsRecyclerViewAdapter mAdapter;
-    private List<TopNews> mList;
+    private List<TopNews> mList = new ArrayList<>();
     private Context mContext;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayoutManager layoutManager;
+    private View mView;
 
     private Thread mThread;
     private Runnable runnable;
+    private BmobQuery<TopNews> query;
 
     private final static int MSG_SUCCESS = 0; //成功获取数据的标识
     private final static int MSG_FAILURE = 1; //失败获取数据的标识
@@ -52,8 +55,9 @@ public class TopNewsFragment extends Fragment {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case MSG_SUCCESS:
-                   //mList= (List<TopNews>) msg.obj;
-                    Toast.makeText(mContext,"查询数据成功",Toast.LENGTH_SHORT).show();
+                    mList= (List<TopNews>) msg.obj;
+                   //Toast.makeText(mContext,"查询数据成功",Toast.LENGTH_SHORT).show();
+                    initView(mView, mContext);
                     break;
                 case MSG_FAILURE:
                     Toast.makeText(mContext,"查询数据失败",Toast.LENGTH_SHORT).show();
@@ -72,9 +76,9 @@ public class TopNewsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        this.mView=view;
         checkData();
         initData();
-        initView(view);
     }
 
     /**
@@ -84,13 +88,19 @@ public class TopNewsFragment extends Fragment {
          runnable=new Runnable() {
             @Override
             public void run() {
-                BmobQuery<TopNews> query=new BmobQuery<TopNews>();
+               query=new BmobQuery<TopNews>();
+                query.include("author");
+                /*
+                   第一次进入应用的时候，设置其查询的缓存策略为CACHE_ELSE_NETWORK,当用户执行上拉或者下拉刷新操作时，设置查询的缓存策略为NETWORK_ELSE_CACHE
+                 */
+                query.setCachePolicy(BmobQuery.CachePolicy.CACHE_ELSE_NETWORK);
+
                 query.setLimit(40);  //返回40条数据，如果不加上这条语句，默认返回10条数据
                 query.findObjects(mContext, new FindListener<TopNews>() {
 
                     @Override
                     public void onSuccess(List<TopNews> list) {
-                        Toast.makeText(mContext,"数据数目"+list.size(),Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(mContext,"数据数目"+list.size(),Toast.LENGTH_SHORT).show();
                         mHandler.obtainMessage(MSG_SUCCESS,list).sendToTarget();
                     }
 
@@ -104,23 +114,9 @@ public class TopNewsFragment extends Fragment {
     }
 
     /**
-     * 初始化数据源
+     * 初始化数据源，开启线程
      */
     private void initData() {
-        mList=new ArrayList<>();
-
-        /**
-         * 假数据测试使用
-         */
-        for(int i=0;i<6;i++){
-            TopNews topNews=new TopNews();
-            SchoolUser schoolUser=new SchoolUser();
-            schoolUser.setNick("YY");
-            topNews.setTitle("我是小怪兽"+i);
-            topNews.setAuthor(schoolUser);
-            mList.add(topNews);
-        }
-
         if(mThread==null){
             mThread=new Thread(runnable);
             mThread.start();
@@ -130,7 +126,7 @@ public class TopNewsFragment extends Fragment {
     /**
      * 初始化视图
      */
-    private void initView(View view) {
+    private void initView(View view,Context context) {
         mRrecyclerView= (RecyclerView) view.findViewById(R.id.rc_topNews);
         mAdapter=new TopNewsRecyclerViewAdapter(mList,mContext);
         mRrecyclerView.setAdapter(mAdapter);
@@ -144,6 +140,8 @@ public class TopNewsFragment extends Fragment {
 
         //设置RecyclerView的动画
         mRrecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // boolean isInCache = query.hasCachedResult(mContext,TopNews.class); //检查缓存数据
 
         //设置监听事件
         mAdapter.setOnItemClickListener(new TopNewsRecyclerViewAdapter.OnItemClickListener() {

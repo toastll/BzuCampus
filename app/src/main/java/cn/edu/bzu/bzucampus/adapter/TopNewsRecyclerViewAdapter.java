@@ -61,7 +61,10 @@ public class TopNewsRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolde
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         holder.tv_nick.setText(mData.get(position).getAuthor().getNick());//昵称
-        //holder.tv_date.setText(mData.get(position).getCreatedAt()); //创建时间
+        holder.tv_date.setText(mData.get(position).getCreatedAt()); //创建时间
+        String url=mData.get(position).getAuthor().getUserPhoto().getFileUrl(context);
+        holder.iv_user_img.setTag(url);
+        new ImageLoader().showImageByThread(holder.iv_user_img,url);
         holder.tv_news_title.setText(mData.get(position).getTitle()); //内容
 
         if (mOnItemClickListener!=null){
@@ -100,14 +103,14 @@ public class TopNewsRecyclerViewAdapter extends RecyclerView.Adapter<MyViewHolde
  */
 class MyViewHolder extends RecyclerView.ViewHolder {
     TextView tv_nick;
-    //ImageView iv_user_img;
-    TextView tv_news_title;
+    ImageView iv_user_img;
+    TextView tv_news_title,tv_date;
     public MyViewHolder(View itemView) {
         super(itemView);
         /**初始化控件**/
         tv_nick = (TextView) itemView.findViewById(R.id.tv_nick);
-      //  iv_user_img= (ImageView) itemView.findViewById(R.id.iv_user_img);
-        //tv_date = (TextView) itemView.findViewById(R.id.tv_date);
+        iv_user_img= (ImageView) itemView.findViewById(R.id.iv_user_img);
+        tv_date = (TextView) itemView.findViewById(R.id.tv_date);
         tv_news_title= (TextView) itemView.findViewById(R.id.tv_news_title);
     }
 }
